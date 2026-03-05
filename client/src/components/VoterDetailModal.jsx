@@ -64,9 +64,9 @@ function VoterDetailModal({ voter, onClose, onVote }) {
             </div>
 
             <div className="voter-detail-row">
-              <span className="voter-detail-label">Referido por</span>
+              <span className="voter-detail-label">Líder</span>
               <span className="voter-detail-value" style={{ color: 'var(--warning)' }}>
-                {voter.referidor || 'Sin referidor'}
+                {voter.referidor || 'Sin líder'}
               </span>
             </div>
 

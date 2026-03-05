@@ -165,7 +165,7 @@ function ImportModal({ onClose, onImport }) {
                 <strong>MESA</strong> - Número de mesa
               </div>
               <div>
-                <strong>REFERIDOR</strong> - Persona que lo trajo (opcional)
+                <strong>LIDER</strong> - Persona que lo trajo (opcional)
               </div>
             </div>
           </div>

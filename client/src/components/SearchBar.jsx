@@ -5,10 +5,10 @@ function SearchBar({
   setSearch, 
   filter, 
   setFilter,
-  mesaFilter,
-  setMesaFilter,
   referidorFilter,
   setReferidorFilter,
+  mesaFilter,
+  setMesaFilter,
   mesas = [],
   referidores = []
 }) {
@@ -27,6 +27,20 @@ function SearchBar({
 
   return (
     <div className="search-filter-container">
+      {/* Filtro por Líder */}
+      <div className="filter-select-container">
+        <select
+          value={referidorFilter || ''}
+          onChange={(e) => setReferidorFilter(e.target.value || null)}
+          className="filter-select"
+        >
+          <option value="">Todos los Líderes</option>
+          {referidores.map(ref => (
+            <option key={ref} value={ref}>{ref}</option>
+          ))}
+        </select>
+      </div>
+      
       {/* Tipo de búsqueda */}
       <div className="search-type-selector">
         <select 
@@ -58,7 +72,7 @@ function SearchBar({
           </button>
         )}
       </div>
-
+      
       {/* Filtro por Mesa */}
       <div className="filter-select-container">
         <select
@@ -69,20 +83,6 @@ function SearchBar({
           <option value="">Todas las Mesas</option>
           {mesas.map(mesa => (
             <option key={mesa} value={mesa}>Mesa {mesa}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* Filtro por Referidor */}
-      <div className="filter-select-container">
-        <select
-          value={referidorFilter || ''}
-          onChange={(e) => setReferidorFilter(e.target.value || null)}
-          className="filter-select"
-        >
-          <option value="">Todos los Referidores</option>
-          {referidores.map(ref => (
-            <option key={ref} value={ref}>{ref}</option>
           ))}
         </select>
       </div>

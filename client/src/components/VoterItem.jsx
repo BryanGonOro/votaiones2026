@@ -30,7 +30,7 @@ function VoterItem({ voter, onClick }) {
         </div>
         {voter.referidor && (
           <div className="voter-referidor">
-            Referido por: <span>{voter.referidor}</span>
+            Lider: <span>{voter.referidor}</span>
           </div>
         )}
       </div>

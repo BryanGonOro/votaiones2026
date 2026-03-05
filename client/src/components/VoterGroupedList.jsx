@@ -5,13 +5,13 @@ function VoterGroupedList({ voters, loading, onVoterClick }) {
   const [expandedMesas, setExpandedMesas] = useState({});
   const [expandedReferidores, setExpandedReferidores] = useState({});
 
-  // Agrupar voters por mesa y luego por referidor
+    // Agrupar voters por mesa y luego por lider
   const groupedData = useMemo(() => {
     const groups = {};
     
     voters.forEach(voter => {
       const mesa = voter.mesa || 'Sin mesa';
-      const referidor = voter.referidor || 'Sin referidor';
+      const referidor = voter.referidor || 'Sin lider';
       
       if (!groups[mesa]) {
         groups[mesa] = {
@@ -68,8 +68,8 @@ function VoterGroupedList({ voters, loading, onVoterClick }) {
     return { total, voted, pending: total - voted };
   };
 
-  // Contar voters por referidor
-  const getReferidorStats = (voters) => {
+  // Contar voters por lider
+  const getLiderStats = (voters) => {
     const voted = voters.filter(v => v.voted).length;
     return { total: voters.length, voted, pending: voters.length - voted };
   };
@@ -116,17 +116,24 @@ function VoterGroupedList({ voters, loading, onVoterClick }) {
               </div>
             </div>
 
-            {/* Lista de Referidores (acordeón dentro de cada mesa) */}
+            {/* Lista de Líderes (acordeón dentro de cada mesa) */}
             {isMesaExpanded && (
               <div className="mesa-content">
                 {Object.entries(mesaData.referidores).sort().map(([referidor, referidorVoters]) => {
-                  const refStats = getReferidorStats(referidorVoters);
+                  // Sort: voted first, then alphabetically by name
+                  const sortedVoters = [...referidorVoters].sort((a, b) => {
+                    if (a.voted !== b.voted) {
+                      return b.voted ? 1 : -1;
+                    }
+                    return a.nombre.localeCompare(b.nombre);
+                  });
+                  const refStats = getLiderStats(referidorVoters);
                   const refKey = `${mesa}-${referidor}`;
                   const isRefExpanded = expandedReferidores[refKey];
                   
                   return (
                     <div key={referidor} className="referidor-group">
-                      {/* Header de Referidor */}
+                      {/* Header de Líder */}
                       <div 
                         className={`referidor-header ${isRefExpanded ? 'expanded' : ''}`}
                         onClick={(e) => {
@@ -137,7 +144,7 @@ function VoterGroupedList({ voters, loading, onVoterClick }) {
                         <div className="referidor-header-left">
                           <span className="expand-icon">{isRefExpanded ? '▼' : '▶'}</span>
                           <span className="referidor-title">
-                            {referidor === 'Sin referidor' ? '👤 Sin referidor' : `👥 ${referidor}`}
+                            {referidor === 'Sin lider' ? '👤 Sin lider' : `👥 ${referidor}`}
                           </span>
                         </div>
                         <div className="referidor-stats">
@@ -150,7 +157,7 @@ function VoterGroupedList({ voters, loading, onVoterClick }) {
                       {/* Lista de Voters */}
                       {isRefExpanded && (
                         <div className="referidor-content">
-                          {referidorVoters.map((voter) => (
+                          {sortedVoters.map((voter) => (
                             <VoterItem 
                               key={voter.id} 
                               voter={voter} 

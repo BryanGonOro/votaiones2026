@@ -19,9 +19,19 @@ function VoterList({ voters, loading, onVoterClick }) {
     );
   }
 
+  // Sort voters: voted first (by voted status desc), then alphabetically by name
+  const sortedVoters = [...voters].sort((a, b) => {
+    // First sort by voted status (voted = true comes first)
+    if (a.voted !== b.voted) {
+      return b.voted ? 1 : -1;
+    }
+    // Then sort alphabetically by name
+    return a.nombre.localeCompare(b.nombre);
+  });
+
   return (
     <div className="voter-list">
-      {voters.map((voter) => (
+      {sortedVoters.map((voter) => (
         <VoterItem 
           key={voter.id} 
           voter={voter} 
