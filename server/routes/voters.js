@@ -193,13 +193,14 @@ router.post('/import', upload.single('file'), async (req, res) => {
     
     let imported = 0;
     let skipped = 0;
+    let duplicates = 0;
     const errors = [];
     
     for (const voter of voters) {
       const validation = validateVoterData(voter);
       
       if (!validation.isValid) {
-        errors.push({ voter: voter.nombre, errors: validation.errors });
+        errors.push({ voter: voter.nombre, cedula: voter.cedula, errors: validation.errors });
         skipped++;
         continue;
       }
@@ -208,6 +209,7 @@ router.post('/import', upload.single('file'), async (req, res) => {
       const existing = await getOne('SELECT id FROM voters WHERE cedula = ?', [voter.cedula]);
       
       if (existing) {
+        duplicates++;
         skipped++;
         continue;
       }
@@ -224,6 +226,7 @@ router.post('/import', upload.single('file'), async (req, res) => {
       message: `Importación completada: ${imported} nuevos, ${skipped} omitidos`,
       imported,
       skipped,
+      duplicates,
       errors: errors.length > 0 ? errors : undefined
     });
   } catch (error) {

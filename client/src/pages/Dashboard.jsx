@@ -93,7 +93,36 @@ function Dashboard() {
   const handleImport = async (file) => {
     try {
       const result = await votersApi.import(file);
-      addToast(result.message, 'success');
+      
+      // Build detailed message
+      let message = `✅ Importación completada: ${result.imported} nuevos, ${result.skipped} omitidos`;
+      
+      // Show detailed info if there are issues
+      if (result.skipped > 0) {
+        const parts = [];
+        
+        // Show validation errors
+        if (result.errors && result.errors.length > 0) {
+          const errorSummary = result.errors.slice(0, 5).map(e => 
+            `• ${e.voter || 'Desconocido'} (${e.cedula || 'sin cédula'}): ${e.errors.join(', ')}`
+          ).join('\n');
+          
+          const moreText = result.errors.length > 5 ? 
+            `\n...y ${result.errors.length - 5} errores más` : '';
+          
+          parts.push(`⚠️ Errores de validación (${result.errors.length}):\n${errorSummary}${moreText}`);
+        }
+        
+        // Show duplicates
+        if (result.duplicates > 0) {
+          parts.push(`📋 ${result.duplicates} voters ya existían en la base de datos`);
+        }
+        
+        alert(`${message}\n\n${parts.join('\n\n')}`);
+      } else {
+        addToast(message, 'success');
+      }
+      
       setShowImportModal(false);
       await loadData();
     } catch (error) {
